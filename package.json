@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Tush-Up/Cactus-Backend#readme",
   "dependencies": {
+    "axios": "^0.26.1",
     "express": "^4.17.3",
     "mongoose": "^6.2.9"
   },
