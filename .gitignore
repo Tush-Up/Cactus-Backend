@@ -1,2 +1,2 @@
-config/
+config/dev.env
 node_modules/
