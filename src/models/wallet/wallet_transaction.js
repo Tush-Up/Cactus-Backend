@@ -8,7 +8,7 @@ const walletTransactionSchema = new mongoose.Schema(
     // double save it for security
     owner: {
       type: String,
-      ref: "Users",
+      ref: "User",
       required: true,
     },
 

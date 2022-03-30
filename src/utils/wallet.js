@@ -4,6 +4,7 @@ const Transaction = require('../models/wallet/transaction');
 
 // Validating User wallet
 const validateUserWallet = async (owner) => {
+  
     try {
       // check if user have a wallet, else create wallet
       const userWallet = await Wallet.findOne({ owner });
@@ -11,7 +12,10 @@ const validateUserWallet = async (owner) => {
       // If user wallet doesn't exist, create a new one
       if (!userWallet) {
         // create wallet
-        const wallet = await new Wallet(owner);
+        const wallet = await new Wallet({
+          owner
+        });
+        await wallet.save()
         return wallet;
       }
       return userWallet;
@@ -72,7 +76,7 @@ const validateUserWallet = async (owner) => {
       const wallet = await Wallet.findOneAndUpdate(
         { owner },
         { $inc: { balance: amount } },
-        { new: true }
+        { returnNewDocument: true }
       );
       return wallet;
     } catch (error) {
