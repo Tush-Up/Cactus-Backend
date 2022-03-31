@@ -23,6 +23,6 @@ const loginValidation = (data) => {
   });
   return schema.validate(data);
 };
-5
+
 module.exports.RegisterValidation = RegisterValidation;
 module.exports.loginValidation = loginValidation;

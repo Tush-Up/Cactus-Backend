@@ -8,12 +8,15 @@ const verifyEmail = async (req, res, next) => {
       next();
     } else {
       console.log("failed");
-      // res.send({
-      //     status: "Error",
-      //     message: "Account not Verified, please check your mail"
-      // })
+      res.send({
+          status: "Error",
+          message: "Account not Verified, please check your mail"
+      })
+      
     }
-  } catch (error) {}
+  } catch (error) {
+    res.status(400).send("Bad request")
+  }
 };
 
 module.exports = { verifyEmail };

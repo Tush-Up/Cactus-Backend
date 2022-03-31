@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(walletRouter);
 
-app.use("/user", authRoute);
+app.use("/users", authRoute);
 
 app.get("/", (req, res) => {
   res.send({ message: "hello there" });

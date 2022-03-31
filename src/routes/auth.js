@@ -12,7 +12,7 @@ let transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: "CactusinsuranceTeam@gmail.com",
-    pass: "Team3tushup",
+    pass: "Team3tushup"
   },
   tls: {
     rejectUnauthorized: false,
@@ -39,13 +39,9 @@ router.post("/register", async (req, res) => {
   const {
     name,
     email,
-    password,
-    repeatPassword,
     phone,
     bankName,
     accountNumber,
-    emailtoken,
-    isVerified,
   } = req.body;
 
   try {
@@ -60,7 +56,7 @@ router.post("/register", async (req, res) => {
       accountNumber,
       isVerified: false,
     });
-    res.status(201).json({ user: user._id });
+    res.status(201).json({ user: user.id, Message: "Please check your email to verify your account to complete registration" });
 
     // Email contents
     const details = {
@@ -70,7 +66,7 @@ router.post("/register", async (req, res) => {
       html: `<h2> ${user.name}! Thanks for Registering with Cactus.<h2>
                 <h4> Please verify your email to continue on our website....<h4>
                 <h4> Enter the otp below to continue <h4>
-                <a href="http://${req.headers.host}/user/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
+                <a href="http://${req.headers.host}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
               
       `,
     };
@@ -116,7 +112,7 @@ router.get("/verify-email", async (req, res) => {
 
 //jwt
 const createToken = (id) => {
-  return jwt.sign({ id }, process.env.jwt_key);
+  return jwt.sign({ id }, process.env.JWT_SECRET);
 };
 
 //login
@@ -134,7 +130,7 @@ router.post("/signIn", verifyEmail , async (req, res) => {
   if (!validPass) return res.status(400).send("Invalid Password");
 
   // jwt
-  const token = jwt.sign({ _id: user._id }, process.env.jwt_key);
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
   res.header("auth-token", token).send(token);
 
   //res.send("User Logged In");
