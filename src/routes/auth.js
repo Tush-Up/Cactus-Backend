@@ -80,7 +80,7 @@ router.post("/register", async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).send({error: error.message});
   }
 });
 
@@ -168,7 +168,7 @@ router.post('/reset-password', async (req, res)=> {
    })
    res.send({ message: 'Password reset instructions have been sent to your email address'})   
   } catch (error) {
-    res.status(400).send(error.message)
+    res.status(400).send({error: error.message})
   }
  
 })
@@ -193,7 +193,7 @@ router.post('/update-password', async(req, res) => {
     res.status(200).send({Message: "Password changed successfully"})
 
   } catch (error) {
-    res.status(400).send(error.message)
+    res.status(400).send({error: error.message})
   }
 })
 module.exports = router;
