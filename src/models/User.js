@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     max: 13,
-    min: 11,
+    min: 8,
   },
   bankName: {
     type: String,
