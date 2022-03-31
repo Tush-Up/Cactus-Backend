@@ -22,10 +22,17 @@
   },
   "homepage": "https://github.com/Tush-Up/Cactus-Backend#readme",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "axios": "^0.26.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
-    "mongoose": "^6.2.9"
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.9",
+    "nodemailer": "^6.7.3"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",

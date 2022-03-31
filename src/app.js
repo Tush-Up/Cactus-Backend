@@ -1,22 +1,27 @@
-const express = require('express')
-const path = require('path')
-const walletRouter = require('./routes/wallet')
-require('dotenv').config({ path: path.resolve(__dirname, '../config/dev.env')})
-require('./db/mongoose')
+const express = require("express");
+const path = require("path");
+const walletRouter = require("./routes/wallet");
 
-const app = express()
+const authRoute = require("./routes/auth");
+const OTPVerification = require("./models/OTPVerification");
 
-app.use(express.json())
-app.use(walletRouter)
+require("dotenv").config({
+  path: path.resolve(__dirname, "../config/dev.env"),
+});
+require("./db/mongoose");
 
+const app = express();
+app.use(express.json());
+app.use(walletRouter);
 
-app.get('/', (req, res) => {
-    res.send({message: "hello there"})
-})
+app.use("/user", authRoute);
+
+app.get("/", (req, res) => {
+  res.send({ message: "hello there" });
+});
 
 app.get("/pay", (req, res) => {
-    res.sendFile(path.join(__dirname + "/index.html"));
-  });
+  res.sendFile(path.join(__dirname + "/index.html"));
+});
 
-module.exports = app
-
+module.exports = app;

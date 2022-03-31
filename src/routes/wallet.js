@@ -1,6 +1,6 @@
 const express = require('express')
 const axios = require('axios')
-const User = require('../models/user')
+const User = require('../models/User')
 const Wallet = require('../models/wallet/wallet')
 const Transaction = require('../models/wallet/transaction')
 const { 
