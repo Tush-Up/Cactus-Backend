@@ -1,11 +1,9 @@
 const mongoose = require("mongoose");
 
-const walletTransactionSchema = new mongoose.Schema(
+const premiumTransactionSchema = new mongoose.Schema(
   {
     amount: { type: Number, default: 0 },
 
-    // Even though user can be implied from wallet, let us
-    // double save it for security
     owner: {
       type: String,
       ref: "User",
@@ -31,6 +29,6 @@ const walletTransactionSchema = new mongoose.Schema(
   { timestamp: true }
 );
 
-const WalletTransaction = mongoose.model("WalletTransaction", walletTransactionSchema);
+const PremiumTransaction = mongoose.model("PremiumTransaction", premiumTransactionSchema);
 
-module.exports = WalletTransaction;
+module.exports = PremiumTransaction;
