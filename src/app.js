@@ -11,9 +11,14 @@ require("./db/mongoose");
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://cactusinsurance.netlify.app/'
-}));
+app.use((req, res, next) => {
+  const allowedOrigins = ['http://localhost:3000', 'https://cactusinsurance.netlify.app'];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  return next();
+});
 app.use(express.json());
 app.use(premiumRouter);
 
