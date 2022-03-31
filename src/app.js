@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const walletRouter = require("./routes/wallet");
+const premiumRouter = require("./routes/premium");
 
 const authRoute = require("./routes/auth");
 const OTPVerification = require("./models/OTPVerification");
@@ -12,7 +12,7 @@ require("./db/mongoose");
 
 const app = express();
 app.use(express.json());
-app.use(walletRouter);
+app.use(premiumRouter);
 
 app.use("/users", authRoute);
 

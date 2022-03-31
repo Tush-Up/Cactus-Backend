@@ -1,14 +1,14 @@
 const express = require('express')
 const axios = require('axios')
 const User = require('../models/User')
-const Wallet = require('../models/wallet/wallet')
-const Transaction = require('../models/wallet/transaction')
+const Premiums = require('../models/premium/premiums')
+const Transaction = require('../models/premium/transaction')
 const { 
-    validateUserWallet,
-    createWalletTransaction, 
+    validateUserPremium,
+    createPremiumTransaction, 
     createTransaction, 
-    updateWallet 
-} = require('../utils/wallet')
+    updatePremium 
+} = require('../utils/premium')
 
 const router = express.Router()
 
@@ -28,7 +28,7 @@ try {
       "Content-Type": "application/json",
       Accept: "application/json",
       Authorization: `${process.env.FLUTTERWAVE_V3_SECRET_KEY}`,
-    },
+    }
   });
 
   const { status, currency, id, amount, customer } = response.data.data;
@@ -41,20 +41,20 @@ try {
 
   // check if customer exist in our database
   const user = await User.findOne({ email: customer.email });
-  // check if user have a wallet, else create wallet
-  const wallet = await validateUserWallet(user._id);
+  // check if user have a premium, else create premium
+  const premium = await validateUserPremium(user._id);
 
-  // create wallet transaction
-  await createWalletTransaction(user._id, status, currency, amount);
+  // create premium transaction
+  await createPremiumTransaction(user._id, status, currency, amount);
 
   // create transaction
   await createTransaction(user._id, id, status, currency, amount, customer);
 
-  await updateWallet(user._id, amount);
+  const updatedPremium = await updatePremium(user._id, amount);
 
   return res.status(200).json({
     response: "wallet funded successfully",
-    data: wallet,
+    data: updatedPremium,
   });
 } catch (error) {
     console.log(error)
@@ -63,13 +63,13 @@ try {
 });
 
 //Get user wallet balance
-router.get("/wallet/:userId/balance", async (req, res) => {
+router.get("/premium/:userId/total_premium_paid", async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const wallet = await Wallet.findOne({ userId });
+    const premium = await Premiums.findOne({ userId });
     // user
-    res.status(200).send({wallet_Balance: wallet.balance});
+    res.status(200).send({Total_paid_premium: premium.totalPaid});
   } catch (err) {
     console.log(err);
   }

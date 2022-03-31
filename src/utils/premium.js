@@ -1,41 +1,41 @@
-const Wallet = require('../models/wallet/wallet');
-const WalletTransaction = require('../models/wallet/wallet_transaction');
-const Transaction = require('../models/wallet/transaction');
+const Premiums = require('../models/premium/premiums');
+const PremiumTransaction = require('../models/premium/premium_transaction');
+const Transaction = require('../models/premium/transaction');
 
 // Validating User wallet
-const validateUserWallet = async (owner) => {
+const validateUserPremium = async (owner) => {
   
     try {
       // check if user have a wallet, else create wallet
-      const userWallet = await Wallet.findOne({ owner });
+      const userPremium = await Premiums.findOne({ owner });
   
       // If user wallet doesn't exist, create a new one
-      if (!userWallet) {
+      if (!userPremium) {
         // create wallet
-        const wallet = await new Wallet({
+        const premium = await new Premiums({
           owner
         });
-        await wallet.save()
-        return wallet;
+        await premium.save()
+        return premium;
       }
-      return userWallet;
+      return userPremium;
     } catch (error) {
       console.log(error);
     }
   };
   
   // Create Wallet Transaction
-  const createWalletTransaction = async (owner, status, currency, amount) => {
+  const createPremiumTransaction = async (owner, status, currency, amount) => {
     try {
       // create wallet transaction
-      const walletTransaction = await WalletTransaction.create({
+      const premiumTransaction = await PremiumTransaction.create({
         amount,
         owner,
         isInflow: true,
         currency,
         status,
       });
-      return walletTransaction;
+      return premiumTransaction;
     } catch (error) {
       console.log(error);
     }
@@ -69,24 +69,22 @@ const validateUserWallet = async (owner) => {
     }
   };
   
-  // Update wallet 
-  const updateWallet = async (owner, amount) => {
+  // Update premium
+  const updatePremium = async (owner, amount) => {
     try {
-      // update wallet
-      const wallet = await Wallet.findOneAndUpdate(
-        { owner },
-        { $inc: { balance: amount } },
-        { returnNewDocument: true }
-      );
-      return wallet;
+      // update premium
+      const premium = await Premiums.findOne( {owner});
+      premium.totalPaid += amount;
+      await premium.save()
+      return premium;
     } catch (error) {
       console.log(error);
     }
   };
 
   module.exports = {
-      validateUserWallet,
-      createWalletTransaction,
+      validateUserPremium,
+      createPremiumTransaction,
       createTransaction,
-      updateWallet
+      updatePremium
   }

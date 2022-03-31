@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-const walletSchema = mongoose.Schema(
+const premiumSchema = mongoose.Schema(
   {
-    balance: { type: Number, default: 0 },
+    totalPaid: { type: Number, default: 0 },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -12,5 +12,5 @@ const walletSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Wallet = mongoose.model('Wallet', walletSchema)
-module.exports = Wallet
+const Premiums = mongoose.model('Premiums', premiumSchema)
+module.exports = Premiums
