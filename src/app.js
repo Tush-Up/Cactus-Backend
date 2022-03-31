@@ -1,16 +1,19 @@
 const express = require("express");
 const path = require("path");
+const cors = require('cors')
 const premiumRouter = require("./routes/premium");
-
 const authRoute = require("./routes/auth");
 const OTPVerification = require("./models/OTPVerification");
-
 require("dotenv").config({
   path: path.resolve(__dirname, "../config/dev.env"),
 });
 require("./db/mongoose");
 
 const app = express();
+
+app.use(cors({
+  origin: 'https://cactusinsurance.netlify.app/'
+}));
 app.use(express.json());
 app.use(premiumRouter);
 
