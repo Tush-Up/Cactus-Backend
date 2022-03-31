@@ -9,7 +9,7 @@ const RegisterValidation = (data) => {
       .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
     repeatPassword: Joi.ref("password"),
     email: Joi.string().min(6).required().email(),
-    phone: Joi.string().min(11).max(13).required(),
+    phone: Joi.string().min(8).max(13).required(),
     bankName: Joi.string().min(3).required(),
     accountNumber: Joi.string().min(9).max(15).required(),
   });

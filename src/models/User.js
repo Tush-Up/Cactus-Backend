@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
   accountNumber: {
     type: String,
     required: true,
-    min: 10,
+    min: 9,
     max: 15,
   },
   emailtoken: {
