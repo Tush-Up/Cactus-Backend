@@ -65,7 +65,6 @@ router.post("/register", async (req, res) => {
       subject: "Cactus -Verify your email",
       html: `<h2> ${user.name}! Thanks for Registering with Cactus.<h2>
                 <h4> Please verify your email to continue on our website....<h4>
-                <h4> Enter the otp below to continue <h4>
                 <a href="http://${req.headers.host}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
               
       `,
@@ -137,4 +136,64 @@ router.post("/signIn", verifyEmail , async (req, res) => {
   //validates if user is logged in
 });
 
+//Reset password
+router.post('/reset-password', async (req, res)=> {
+  try {
+    const token = crypto.randomBytes(32).toString("hex")
+    const user = await User.findOne({ email: req.body.email })
+    if( !user ) {
+      return res.status(404).send({error: "No user with that email"})
+    }
+    user.resetPasswordToken = token
+    user.resetPasswordTokenExpiry = Date.now() + 900000
+    await user.save()
+
+    //Send email
+    const Emaildetails = {
+     from: "Cactus-insurance@outlook.com",
+     to: req.body.email,
+     subject: "PASSWORD RESET REQUEST",
+     html: `<h2> ${user.name}!.<h2>
+               <h4> You recently requested for a password request on our website<h4>
+               <h4> Click on the link below to proceed. The link expires in 15 minutes. If you did not request this, kindly disregard this email<h4>
+               <a href="http://${req.headers.host}/users/reset/${user.resetPasswordToken}" > Click to reset your password <a>`
+   };
+   // send email 
+   transporter.sendMail(Emaildetails, (error) => {
+     if (error) {
+       console.log(error);
+     } else {
+       console.log("email sent");
+     }
+   })
+   res.send({ message: 'Password reset instructions have been sent to your email address'})   
+  } catch (error) {
+    res.status(400).send(error)
+  }
+ 
+})
+//update new Password
+
+router.post('/update-password', async(req, res) => {
+  try {
+    const newPassword = req.body.password
+    const sentToken = req.body.token
+    const user = await User.findOne({resetPasswordToken: sentToken, resetPasswordTokenExpiry: {$gt: Date.now()}})
+    if(!user) {
+      return res.status(422).send({ error: "session expired, reset password aagain"})
+    }
+    //modify password
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(newPassword, salt)
+    user.password = hashPassword
+    user.repeatPassword = hashPassword
+    user.resetPasswordToken = undefined
+    user.resetPasswordTokenExpiry = undefined
+    await user.save()
+    res.status(200).send({Message: "Password changed successfully"})
+
+  } catch (error) {
+    res.status(400).send(error)
+  }
+})
 module.exports = router;
