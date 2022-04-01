@@ -10,6 +10,9 @@ const router = new express.Router()
 router.post('/wallet/credit', Auth, async (req, res) => {
     const { amount } = req.body
     try {
+        if(typeof(amount) !== 'number') {
+            return res.status(404).send({ error: "amount must be number" })
+        }
         const user = await User.findOne({ _id: req.user._id })
         if (!user) {
             return res.status(404).send({ error: "User not found" })
