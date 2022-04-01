@@ -1,4 +1,5 @@
 const express = require('express')
+const axios = require('axios')
 const Auth = require('./PrivateRoutes')
 const User = require('../models/User')
 const Wallet = require('../models/wallet/wallet')
@@ -24,6 +25,7 @@ router.post('/wallet/credit', Auth, async (req, res) => {
         //create wallet transaction
         await WalletTransaction.create({
             owner: user._id,
+            isOutflow: false,
             amount,
             status:"successful"
         })
@@ -44,8 +46,34 @@ router.get('/wallet/balance', Auth, async(req, res) => {
         res.status(400).send({ error: error.message })
     }
 })
+
+//fetch wallet? outflow or inflow or fetch by status
+
 //withdraw from wallet
 
-router.post('/')
+router.post('/wallet/withdraw', Auth, async (req, res) => {
+    const { amount } = req.body
+    try {
+        const wallet = await Wallet.findOne({ owner: req.user._id })
+        //check if user has enough to withdraw
+        if(amount > wallet.balance) {
+            return res.status(400).send({message: "Not enough funds to withdraw" })
+        }
+        wallet.balance -= amount
+        await wallet.save()
+        //create wallet transaction
+        await WalletTransaction.create({
+            owner: req.user._id,
+            isOutflow: true,
+            amount,
+            status:"pending"
+        })
+        res.status(201).send({ wallet })
+
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({ error: error.message })
+    }
+})
 
 module.exports = router
