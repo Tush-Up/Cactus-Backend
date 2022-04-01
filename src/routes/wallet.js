@@ -10,12 +10,12 @@ const router = new express.Router()
 router.post('/wallet/credit', Auth, async (req, res) => {
     const { amount } = req.body
     try {
-        const user = await User.findOne({_id: req.user._id})
-        if( !user ) {
-            return res.status(404).send({ error: "User not found"})
+        const user = await User.findOne({ _id: req.user._id })
+        if (!user) {
+            return res.status(404).send({ error: "User not found" })
         }
         if (user.claim !== "Approved") {
-            return res.status(400).send({error: 'user does not have any approved claims'})
+            return res.status(400).send({ error: 'user does not have any approved claims' })
         }
         //fetch user wallet from db
         const wallet = await Wallet.findOne({ owner: user._id })
@@ -26,7 +26,8 @@ router.post('/wallet/credit', Auth, async (req, res) => {
             owner: user._id,
             isOutflow: false,
             amount,
-            status:"successful"
+            paymentMethod: 'Admin Credit',
+            status: "successful"
         })
         res.status(201).send({ wallet })
     }
@@ -37,42 +38,66 @@ router.post('/wallet/credit', Auth, async (req, res) => {
 })
 
 //get wallet balance
-router.get('/wallet/balance', Auth, async(req, res) => {
+router.get('/wallet/balance', Auth, async (req, res) => {
     try {
-        const wallet = await Wallet.findOne({ owner: req.user._id})
-        res.send({ Wallet_balance: wallet.balance})
+        const wallet = await Wallet.findOne({ owner: req.user._id })
+        res.send({ Wallet_balance: wallet.balance })
     } catch (error) {
         res.status(400).send({ error: error.message })
     }
 })
 
-//fetch wallet? outflow or inflow or fetch by status
-// /wallet?status=successful
-router.get('/wallet/transactions', Auth, async(req, res) => {
+
+//fetch inflow wallet transactions?.
+
+router.get('/wallet/transactions/inflow', Auth, async (req, res) => {
     const status = req.query.status
-    
     try {
-        const allowedStatus = ['successful', 'pending', 'failed']
-        const isValidStatus = allowedStatus.includes(status)
-        if(!isValidStatus) {
-            return res.status(400).send("Invalid status")
+        if (status) {
+            const allowedStatus = ['successful', 'pending', 'failed']
+            const isValidStatus = allowedStatus.includes(status)
+            if (!isValidStatus) {
+                return res.status(400).send("Invalid status")
+            }
+            const WalletTransactions = await WalletTransaction.find({ owner: req.user._id, status, isOutflow:false })
+          return  res.send(WalletTransactions)
         }
-        const WalletTransactions = await WalletTransaction.find({ owner: req.user._id, status})
-        res.send({Transactions: WalletTransactions})
-        
+        const WalletTransactions = await WalletTransaction.find({ owner: req.user._id, isOutflow:false })
+        res.send({ Transactions: WalletTransactions })
     } catch (error) {
         res.status(400).send({ error: error.message })
     }
 })
-//withdraw from wallet
 
+//fetch outflow wallet transactions?.
+
+router.get('/wallet/transactions/outflow', Auth, async (req, res) => {
+    const status = req.query.status
+    try {
+        if (status) {
+            const allowedStatus = ['successful', 'pending', 'failed']
+            const isValidStatus = allowedStatus.includes(status)
+            if (!isValidStatus) {
+                return res.status(400).send("Invalid status")
+            }
+            const WalletTransactions = await WalletTransaction.find({ owner: req.user._id, status, isOutflow:true })
+          return  res.send(WalletTransactions)
+        }
+        const WalletTransactions = await WalletTransaction.find({ owner: req.user._id, isOutflow:true })
+        res.send({ Transactions: WalletTransactions })
+    } catch (error) {
+        res.status(400).send({ error: error.message })
+    }
+})
+
+//withdraw from wallet
 router.post('/wallet/withdraw', Auth, async (req, res) => {
     const { amount } = req.body
     try {
         const wallet = await Wallet.findOne({ owner: req.user._id })
         //check if user has enough to withdraw
-        if(amount > wallet.balance) {
-            return res.status(400).send({message: "Not enough funds to withdraw" })
+        if (amount > wallet.balance) {
+            return res.status(400).send({ message: "Not enough funds to withdraw" })
         }
         wallet.balance -= amount
         await wallet.save()
@@ -81,7 +106,7 @@ router.post('/wallet/withdraw', Auth, async (req, res) => {
             owner: req.user._id,
             isOutflow: true,
             amount,
-            status:"pending"
+            status: "pending"
         })
         res.status(201).send({ wallet })
 
