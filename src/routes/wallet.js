@@ -6,6 +6,7 @@ const WalletTransaction = require('../models/wallet/wallet_transaction')
 
 const router = new express.Router()
 
+//credit user wallet
 router.post('/wallet/credit', Auth, async (req, res) => {
     const { amount } = req.body
     try {
@@ -33,5 +34,18 @@ router.post('/wallet/credit', Auth, async (req, res) => {
     }
 
 })
+
+//get wallet balance
+router.get('/wallet/balance', Auth, async(req, res) => {
+    try {
+        const wallet = await Wallet.findOne({ owner: req.user._id})
+        res.send({ Wallet_balance: wallet.balance})
+    } catch (error) {
+        res.status(400).send({ error: error.message })
+    }
+})
+//withdraw from wallet
+
+router.post('/')
 
 module.exports = router
