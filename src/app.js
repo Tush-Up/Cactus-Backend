@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const cors = require('cors')
 const premiumRouter = require("./routes/premium");
+const walletRouter = require('./routes/wallet')
 const authRoute = require("./routes/auth");
 const OTPVerification = require("./models/OTPVerification");
 require("dotenv").config({
@@ -19,6 +20,7 @@ app.use(
 
 app.use(express.json());
 app.use(premiumRouter);
+app.use(walletRouter)
 
 app.use("/users", authRoute);
 

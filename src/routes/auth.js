@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const Wallet = require('../models/wallet/wallet');
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { verifyEmail } = require("../routes/Privatemail");
@@ -56,6 +57,10 @@ router.post("/register", async (req, res) => {
       accountNumber,
       isVerified: false,
     });
+    //create user wallet
+    await Wallet.create({
+      owner: user._id
+    })
     res.status(201).json({ user: user.id, Message: "Please check your email to verify your account to complete registration" });
 
     // Email contents
