@@ -57,6 +57,11 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  claim: {
+    type: String,
+    enum: ["No claims", "Pending", "Approved", "Declined"],
+    default: "No claims"
+  }
 });
 
 const User = mongoose.model("User", userSchema);

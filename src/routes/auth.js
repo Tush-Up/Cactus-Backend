@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const Wallet = require('../models/wallet/wallet');
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { verifyEmail } = require("../routes/Privatemail");
@@ -56,29 +57,33 @@ router.post("/register", async (req, res) => {
       accountNumber,
       isVerified: false,
     });
+    //create user wallet
+    await Wallet.create({
+      owner: user._id
+    })
     res.status(201).json({ user: user.id, Message: "Please check your email to verify your account to complete registration" });
 
     // Email contents
-    const details = {
-      from: "Cactus-insurance@outlook.com",
-      to: req.body.email,
-      subject: "Cactus -Verify your email",
-      html: `<h2> ${user.name}! Thanks for Registering with Cactus.<h2>
-                <h4> Please verify your email to continue on our website....<h4>
-                <a href="http://${req.headers.host}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
+    // const details = {
+    //   from: "Cactus-insurance@outlook.com",
+    //   to: req.body.email,
+    //   subject: "Cactus -Verify your email",
+    //   html: `<h2> ${user.name}! Thanks for Registering with Cactus.<h2>
+    //             <h4> Please verify your email to continue on our website....<h4>
+    //             <a href="http://${req.headers.host}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
               
-      `,
-    };
-    // send mail
+    //   `,
+    // };
+    // // send mail
 
-    transporter.sendMail(details, (error) => {
-      if (error) {
-        console.log("it has an error");
-        console.log(error);
-      } else {
-        console.log("email sent");
-      }
-    });
+    // transporter.sendMail(details, (error) => {
+    //   if (error) {
+    //     console.log("it has an error");
+    //     console.log(error);
+    //   } else {
+    //     console.log("email sent");
+    //   }
+    // });
   } catch (error) {
     res.status(400).send({error: error.message});
   }
