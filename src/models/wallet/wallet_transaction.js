@@ -10,7 +10,7 @@ const walletTransactionSchema = new mongoose.Schema(
       required: true,
     },
 
-    isOutflow: { type: Boolean },
+    isOutflow: { type: Boolean, default: true },
 
     paymentMethod: { type: String, default: "Bank Transfer" },
 

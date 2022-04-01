@@ -1,5 +1,4 @@
 const express = require('express')
-const axios = require('axios')
 const Auth = require('./PrivateRoutes')
 const User = require('../models/User')
 const Wallet = require('../models/wallet/wallet')
@@ -48,7 +47,23 @@ router.get('/wallet/balance', Auth, async(req, res) => {
 })
 
 //fetch wallet? outflow or inflow or fetch by status
-
+// /wallet?status=successful
+router.get('/wallet/transactions', Auth, async(req, res) => {
+    const status = req.query.status
+    
+    try {
+        const allowedStatus = ['successful', 'pending', 'failed']
+        const isValidStatus = allowedStatus.includes(status)
+        if(!isValidStatus) {
+            return res.status(400).send("Invalid status")
+        }
+        const WalletTransactions = await WalletTransaction.find({ owner: req.user._id, status})
+        res.send({Transactions: WalletTransactions})
+        
+    } catch (error) {
+        res.status(400).send({ error: error.message })
+    }
+})
 //withdraw from wallet
 
 router.post('/wallet/withdraw', Auth, async (req, res) => {
