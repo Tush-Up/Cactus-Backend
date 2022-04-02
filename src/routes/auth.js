@@ -72,7 +72,7 @@ router.post("/register", async (req, res) => {
       subject: "Cactus -Verify your email",
       html: `<h2> ${user.name}! Thanks for Registering with Cactus.<h2>
                 <h4> Please verify your email to continue on our website....<h4>
-                <a href="http://${req.headers.host}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
+                <a href="http://${process.env.EMAIL_URL}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
               
       `,
     };
@@ -163,7 +163,7 @@ router.post('/reset-password', async (req, res)=> {
      html: `<h2> ${user.name}!.<h2>
                <h4> You recently requested for a password request on our website<h4>
                <h4> Click on the link below to proceed. The link expires in 15 minutes. If you did not request this, kindly disregard this email<h4>
-               <a href="http://${req.headers.host}/users/reset/${user.resetPasswordToken}" > Click to reset your password <a>`
+               <a href="http://${process.env.EMAIL_URL}/users/reset/${user.resetPasswordToken}" > Click to reset your password <a>`
    };
    // send email 
    transporter.sendMail(Emaildetails, (error) => {
