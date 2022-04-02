@@ -87,14 +87,15 @@ router.post("/register", async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(400).send({error: error.message});
+    res.status(400).send({ error: error.message });
   }
 });
 
 //verify mail
 router.post("/verify-email", async (req, res) => {
+  const token = req.body.token;
+  
   try {
-    const token = req.body.token;
     const user = await User.findOne({ emailtoken: token });
 
     if (user) {
@@ -122,7 +123,7 @@ const createToken = (id) => {
 };
 
 //login
-router.post("/signIn", verifyEmail , async (req, res) => {
+router.post("/signIn", verifyEmail, async (req, res) => {
   //Validate Entered Data
   const { error } = loginValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -137,19 +138,19 @@ router.post("/signIn", verifyEmail , async (req, res) => {
 
   // jwt
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-  res.header("auth-token", token).send({user, token});
+  res.header("auth-token", token).send({ user, token });
 
   //res.send("User Logged In");
   //validates if user is logged in
 });
 
 //Reset password
-router.post('/reset-password', async (req, res)=> {
+router.post('/reset-password', async (req, res) => {
   try {
     const token = crypto.randomBytes(32).toString("hex")
     const user = await User.findOne({ email: req.body.email })
-    if( !user ) {
-      return res.status(404).send({error: "No user with that email"})
+    if (!user) {
+      return res.status(404).send({ error: "No user with that email" })
     }
     user.resetPasswordToken = token
     user.resetPasswordTokenExpiry = Date.now() + 900000
@@ -157,37 +158,37 @@ router.post('/reset-password', async (req, res)=> {
 
     //Send email
     const Emaildetails = {
-     from: "Cactus-insurance@outlook.com",
-     to: req.body.email,
-     subject: "PASSWORD RESET REQUEST",
-     html: `<h2> ${user.name}!.<h2>
+      from: "Cactus-insurance@outlook.com",
+      to: req.body.email,
+      subject: "PASSWORD RESET REQUEST",
+      html: `<h2> ${user.name}!.<h2>
                <h4> You recently requested for a password request on our website<h4>
                <h4> Click on the link below to proceed. The link expires in 15 minutes. If you did not request this, kindly disregard this email<h4>
                <a href="http://${process.env.EMAIL_URL}/users/reset/${user.resetPasswordToken}" > Click to reset your password <a>`
-   };
-   // send email 
-   transporter.sendMail(Emaildetails, (error) => {
-     if (error) {
-       console.log(error);
-     } else {
-       console.log("email sent");
-     }
-   })
-   res.send({ message: 'Password reset instructions have been sent to your email address'})   
+    };
+    // send email 
+    transporter.sendMail(Emaildetails, (error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("email sent");
+      }
+    })
+    res.send({ message: 'Password reset instructions have been sent to your email address' })
   } catch (error) {
-    res.status(400).send({error: error.message})
+    res.status(400).send({ error: error.message })
   }
- 
+
 })
 //update new Password
 
-router.post('/update-password', async(req, res) => {
+router.post('/update-password', async (req, res) => {
   try {
     const newPassword = req.body.password
     const sentToken = req.body.token
-    const user = await User.findOne({resetPasswordToken: sentToken, resetPasswordTokenExpiry: {$gt: Date.now()}})
-    if(!user) {
-      return res.status(422).send({ error: "session expired, reset password aagain"})
+    const user = await User.findOne({ resetPasswordToken: sentToken, resetPasswordTokenExpiry: { $gt: Date.now() } })
+    if (!user) {
+      return res.status(422).send({ error: "session expired, reset password aagain" })
     }
     //modify password
     const salt = await bcrypt.genSalt(10);
@@ -197,19 +198,19 @@ router.post('/update-password', async(req, res) => {
     user.resetPasswordToken = undefined
     user.resetPasswordTokenExpiry = undefined
     await user.save()
-    res.status(200).send({Message: "Password changed successfully"})
+    res.status(200).send({ Message: "Password changed successfully" })
 
   } catch (error) {
-    res.status(400).send({error: error.message})
+    res.status(400).send({ error: error.message })
   }
 })
 
 //Delete account
 
-router.delete('/delete', Auth, async(req, res) => {
-    const userId = req.user._id
+router.delete('/delete', Auth, async (req, res) => {
+  const userId = req.user._id
   try {
-    const user = await User.findOne({_id: userId})
+    const user = await User.findOne({ _id: userId })
     await user.remove()
     //send cancellation email
     // Email contents
@@ -230,7 +231,7 @@ router.delete('/delete', Auth, async(req, res) => {
     });
     res.send(user)
   } catch (error) {
-    res.status(400).send({error: error.message})
+    res.status(400).send({ error: error.message })
   }
 })
 module.exports = router;
