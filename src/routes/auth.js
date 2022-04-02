@@ -92,9 +92,9 @@ router.post("/register", async (req, res) => {
 });
 
 //verify mail
-router.get("/verify-email", async (req, res) => {
+router.post("/verify-email", async (req, res) => {
   try {
-    const token = req.query.token;
+    const token = req.body.token;
     const user = await User.findOne({ emailtoken: token });
 
     if (user) {
