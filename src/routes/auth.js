@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const Wallet = require('../models/wallet/wallet');
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const Auth = require('./PrivateRoutes')
 const { verifyEmail } = require("../routes/Privatemail");
 const { RegisterValidation, loginValidation } = require("../models/validation");
 
@@ -20,6 +21,7 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+//sign up
 router.post("/register", async (req, res) => {
   //Validating User data
 
@@ -70,7 +72,7 @@ router.post("/register", async (req, res) => {
       subject: "Cactus -Verify your email",
       html: `<h2> ${user.name}! Thanks for Registering with Cactus.<h2>
                 <h4> Please verify your email to continue on our website....<h4>
-                <a href="http://${req.headers.host}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
+                <a href="http://${process.env.EMAIL_URL}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
               
       `,
     };
@@ -135,7 +137,7 @@ router.post("/signIn", verifyEmail , async (req, res) => {
 
   // jwt
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-  res.header("auth-token", token).send(token);
+  res.header("auth-token", token).send({user, token});
 
   //res.send("User Logged In");
   //validates if user is logged in
@@ -161,7 +163,7 @@ router.post('/reset-password', async (req, res)=> {
      html: `<h2> ${user.name}!.<h2>
                <h4> You recently requested for a password request on our website<h4>
                <h4> Click on the link below to proceed. The link expires in 15 minutes. If you did not request this, kindly disregard this email<h4>
-               <a href="http://${req.headers.host}/users/reset/${user.resetPasswordToken}" > Click to reset your password <a>`
+               <a href="http://${process.env.EMAIL_URL}/users/reset/${user.resetPasswordToken}" > Click to reset your password <a>`
    };
    // send email 
    transporter.sendMail(Emaildetails, (error) => {
@@ -197,6 +199,36 @@ router.post('/update-password', async(req, res) => {
     await user.save()
     res.status(200).send({Message: "Password changed successfully"})
 
+  } catch (error) {
+    res.status(400).send({error: error.message})
+  }
+})
+
+//Delete account
+
+router.delete('/delete', Auth, async(req, res) => {
+    const userId = req.user._id
+  try {
+    const user = await User.findOne({_id: userId})
+    await user.remove()
+    //send cancellation email
+    // Email contents
+    const details = {
+      from: "Cactus-insurance@outlook.com",
+      to: user.email,
+      subject: "Good bye!",
+      text: `Goodbye ${user.name}. It's sad to see you go. Is there anything we could have done to keep you?`
+    };
+    // send mail
+
+    transporter.sendMail(details, (error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("email sent");
+      }
+    });
+    res.send(user)
   } catch (error) {
     res.status(400).send({error: error.message})
   }
