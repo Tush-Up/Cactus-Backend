@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const Wallet = require('../models/wallet/wallet');
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const Auth = require('./PrivateRoutes')
 const { verifyEmail } = require("../routes/Privatemail");
 const { RegisterValidation, loginValidation } = require("../models/validation");
 
@@ -20,6 +21,7 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+//sign up
 router.post("/register", async (req, res) => {
   //Validating User data
 
@@ -135,7 +137,7 @@ router.post("/signIn", verifyEmail , async (req, res) => {
 
   // jwt
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-  res.header("auth-token", token).send(token);
+  res.header("auth-token", token).send({user, token});
 
   //res.send("User Logged In");
   //validates if user is logged in
@@ -197,6 +199,36 @@ router.post('/update-password', async(req, res) => {
     await user.save()
     res.status(200).send({Message: "Password changed successfully"})
 
+  } catch (error) {
+    res.status(400).send({error: error.message})
+  }
+})
+
+//Delete account
+
+router.delete('/delete', Auth, async(req, res) => {
+    const userId = req.user._id
+  try {
+    const user = await User.findOne({_id: userId})
+    await user.remove()
+    //send cancellation email
+    // Email contents
+    const details = {
+      from: "Cactus-insurance@outlook.com",
+      to: user.email,
+      subject: "Good bye!",
+      text: `Goodbye ${user.name}. It's sad to see you go. Is there anything we could have done to keep you?`
+    };
+    // send mail
+
+    transporter.sendMail(details, (error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("email sent");
+      }
+    });
+    res.send(user)
   } catch (error) {
     res.status(400).send({error: error.message})
   }
