@@ -72,7 +72,7 @@ router.post("/register", async (req, res) => {
       subject: "Cactus -Verify your email",
       html: `<h2> ${user.name}! Thanks for Registering with Cactus.<h2>
                 <h4> Please verify your email to continue on our website....<h4>
-                <a href="http://${process.env.EMAIL_URL}/users/verify-email?token=${user.emailtoken}" > Click to verify your mail <a>
+                <a href="http://${process.env.EMAIL_URL}/users/verify-email/${user.emailtoken}" > Click to verify your mail <a>
               
       `,
     };
