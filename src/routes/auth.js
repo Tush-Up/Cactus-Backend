@@ -7,7 +7,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const Auth = require('./PrivateRoutes')
 const { verifyEmail } = require("../routes/Privatemail");
-const { RegisterValidation, loginValidation } = require("../models/validation");
+const { RegisterValidation, loginValidation, editProfileValidation } = require("../models/validation");
 
 //setup nodemailer
 let transporter = nodemailer.createTransport({
@@ -94,7 +94,7 @@ router.post("/register", async (req, res) => {
 //verify mail
 router.post("/verify-email", async (req, res) => {
   const token = req.body.token;
-  
+
   try {
     const user = await User.findOne({ emailtoken: token });
 
@@ -205,8 +205,45 @@ router.post('/update-password', async (req, res) => {
   }
 })
 
-//Delete account
 
+//Get user profile
+
+router.get('/me', Auth, async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.user._id })
+    res.send(user)
+  } catch (error) {
+    res.status(400).send({ error: error.message })
+  }
+})
+
+// edit user profile
+router.patch('/me', Auth, async (req, res) => {
+  const { error } = editProfileValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['phone', 'bankName', 'accountNumber', 'salary']
+
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'invalid updates' })
+  }
+  try {
+    const user = await User.findOne({ _id: req.user._id })
+
+    updates.forEach((update) => user[update] = req.body[update])
+
+    await user.save()
+    res.send(user)
+  } catch (error) {
+    console.log(error)
+    res.status(400).send(error)
+  }
+})
+
+//Delete account
 router.delete('/delete', Auth, async (req, res) => {
   const userId = req.user._id
   try {

@@ -4,6 +4,7 @@ const cors = require('cors')
 const premiumRouter = require("./routes/premium");
 const walletRouter = require('./routes/wallet')
 const authRoute = require("./routes/auth");
+const User = require("./models/User")
 const OTPVerification = require("./models/OTPVerification");
 require("dotenv").config({
   path: path.resolve(__dirname, "../config/dev.env"),
@@ -22,9 +23,11 @@ app.use(express.json());
 app.use(premiumRouter);
 app.use(walletRouter)
 
+ 
 app.use("/users", authRoute);
 
-app.get("/", (req, res) => {
+app.get("/", async(req, res) => {
+ await User.updateMany({}, {$set:{salary: 50000}})
   res.send({ message: "hello there" });
 });
 

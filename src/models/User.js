@@ -29,6 +29,11 @@ const userSchema = new mongoose.Schema({
     max: 13,
     min: 8,
   },
+  salary: { 
+    type: Number,
+    required: true,
+    min: 30000
+  },
   bankName: {
     type: String,
     required: true,
