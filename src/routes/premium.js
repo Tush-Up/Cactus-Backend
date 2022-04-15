@@ -54,7 +54,7 @@ router.get("/handle-flutterwave-payment", async (req, res) => {
     const updatedPremium = await updatePremium(user._id, amount);
 
     return res.status(200).json({
-      response: "wallet funded successfully",
+      response: "premium paid successfully",
       data: updatedPremium,
     });
   } catch (error) {
@@ -64,7 +64,7 @@ router.get("/handle-flutterwave-payment", async (req, res) => {
 
 });
 
-//Get user wallet balance
+//Get user total premiums paid
 router.get("/premium/total_premium_paid", Auth, async (req, res) => {
   try {
 
