@@ -216,8 +216,31 @@ router.get('/me', Auth, async(req, res) => {
     res.status(400).send({ error: error.message })
   }
 })
-//Delete account
 
+// edit user profile
+router.patch('/me', Auth, async(req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['phone','bankName','accountNumber', 'salary']
+
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'invalid updates' })
+    }
+    try {
+        const user = await User.findOne({_id: req.user._id})
+
+        updates.forEach((update) => user[update] = req.body[update])
+
+        await user.save()
+        res.send(user)
+    } catch (error) {
+      console.log(error)
+        res.status(400).send(error)
+    }
+})
+
+//Delete account
 router.delete('/delete', Auth, async (req, res) => {
   const userId = req.user._id
   try {
