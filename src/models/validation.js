@@ -25,5 +25,16 @@ const loginValidation = (data) => {
   return schema.validate(data);
 };
 
+const editProfileValidation = (data) => {
+  const schema = Joi.object({
+    phone: Joi.string().min(8).max(13).required(),
+    bankName: Joi.string().min(3).required(),
+    accountNumber: Joi.string().min(9).max(15).required(),
+    salary:Joi.number().min(30000)
+  })
+  return schema.validate(data)
+}
+
 module.exports.RegisterValidation = RegisterValidation;
 module.exports.loginValidation = loginValidation;
+module.exports.editProfileValidation = editProfileValidation;

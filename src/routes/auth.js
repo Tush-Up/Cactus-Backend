@@ -7,7 +7,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const Auth = require('./PrivateRoutes')
 const { verifyEmail } = require("../routes/Privatemail");
-const { RegisterValidation, loginValidation } = require("../models/validation");
+const { RegisterValidation, loginValidation, editProfileValidation } = require("../models/validation");
 
 //setup nodemailer
 let transporter = nodemailer.createTransport({
@@ -94,7 +94,7 @@ router.post("/register", async (req, res) => {
 //verify mail
 router.post("/verify-email", async (req, res) => {
   const token = req.body.token;
-  
+
   try {
     const user = await User.findOne({ emailtoken: token });
 
@@ -208,9 +208,9 @@ router.post('/update-password', async (req, res) => {
 
 //Get user profile
 
-router.get('/me', Auth, async(req, res) => {
+router.get('/me', Auth, async (req, res) => {
   try {
-    const user = await User.findOne({_id: req.user._id})
+    const user = await User.findOne({ _id: req.user._id })
     res.send(user)
   } catch (error) {
     res.status(400).send({ error: error.message })
@@ -218,26 +218,29 @@ router.get('/me', Auth, async(req, res) => {
 })
 
 // edit user profile
-router.patch('/me', Auth, async(req, res) => {
-    const updates = Object.keys(req.body)
-    const allowedUpdates = ['phone','bankName','accountNumber', 'salary']
+router.patch('/me', Auth, async (req, res) => {
+  const { error } = editProfileValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['phone', 'bankName', 'accountNumber', 'salary']
 
-    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+  const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
 
-    if (!isValidOperation) {
-        return res.status(400).send({ error: 'invalid updates' })
-    }
-    try {
-        const user = await User.findOne({_id: req.user._id})
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'invalid updates' })
+  }
+  try {
+    const user = await User.findOne({ _id: req.user._id })
 
-        updates.forEach((update) => user[update] = req.body[update])
+    updates.forEach((update) => user[update] = req.body[update])
 
-        await user.save()
-        res.send(user)
-    } catch (error) {
-      console.log(error)
-        res.status(400).send(error)
-    }
+    await user.save()
+    res.send(user)
+  } catch (error) {
+    console.log(error)
+    res.status(400).send(error)
+  }
 })
 
 //Delete account
