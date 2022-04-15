@@ -61,11 +61,6 @@ const userSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
-  },
-  claim: {
-    type: String,
-    enum: ["No claims", "Pending", "Approved", "Declined"],
-    default: "No claims"
   }
 });
 
