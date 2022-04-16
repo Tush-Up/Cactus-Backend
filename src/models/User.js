@@ -58,6 +58,11 @@ const userSchema = new mongoose.Schema({
   isVerified: {
     type: Boolean,
   },
+  kycverification: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
   date: {
     type: Date,
     default: Date.now,

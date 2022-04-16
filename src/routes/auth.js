@@ -45,6 +45,7 @@ router.post("/register", async (req, res) => {
     phone,
     bankName,
     accountNumber,
+    salary
   } = req.body;
 
   try {
@@ -57,6 +58,7 @@ router.post("/register", async (req, res) => {
       phone,
       bankName,
       accountNumber,
+      salary,
       isVerified: false,
     });
     //create user wallet
