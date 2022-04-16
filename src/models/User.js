@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
   salary: { 
     type: Number,
     required: true,
-    min: 30000
+    min: 50000
   },
   bankName: {
     type: String,
