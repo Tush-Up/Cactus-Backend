@@ -39,12 +39,12 @@ const claimFormValidation = (data) => {
   const schema = Joi.object({
     previousPosition: Joi.string().min(6).required(),
     companyName: Joi.string().min(6).required(),
-    companyEmail: Joi.string().min(6).max(25).required(),
+    companyEmail: Joi.string().min(6).required().email(),
     incidentDate: Joi.string().min(6).required(),
     incidentDescription: Joi.string().min(6).required(),
     witnessName: Joi.string().min(6).required(),
     witnessPhone: Joi.number().min(6).required(),
-    witnessEmail: Joi.string().min(6).required()
+    witnessEmail: Joi.string().min(6).required().email()
   })
   return schema.validate(data)
 }
