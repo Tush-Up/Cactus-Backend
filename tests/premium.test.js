@@ -86,29 +86,29 @@ describe("all test cases related to premiun utils", () => {
 })
 
 
-// describe("All test cases for premium route", () => {
-//     test("should create a new premium", async() => {
-//              await request(app)
-//             .get('/handle-flutterwave-payment').query({ transaction_id: '3290545'})
-//             .send().expect(200)
-//     })
-//     test('Should fail if transaction already exist', async() => {
-//         await Transaction.create({
-//             owner:userTwoId,
-//               transactionId:3290545,
-//               name:"Joy",
-//               email: "okwudirejoy@gmail.com",
-//               phone: "08143351712",
-//               amount: 3000,
-//               currency:"NGN",
-//               paymentStatus:"successful",
-//               paymentGateway:"flutterwave"
-//         })
-//         await request(app)
-//         .get('/handle-flutterwave-payment').query({ transaction_id: '3290545'})
-//             .send().expect(409)
-//     })
-// }) 
+describe("All test cases for premium route", () => {
+    test("should create a new premium", async() => {
+             await request(app)
+            .get('/handle-flutterwave-payment').query({ transaction_id: '3290545'})
+            .send().expect(200)
+    })
+    test('Should fail if transaction already exist', async() => {
+        await Transaction.create({
+            owner:userTwoId,
+              transactionId:3290545,
+              name:"Joy",
+              email: "okwudirejoy@gmail.com",
+              phone: "08143351712",
+              amount: 3000,
+              currency:"NGN",
+              paymentStatus:"successful",
+              paymentGateway:"flutterwave"
+        })
+        await request(app)
+        .get('/handle-flutterwave-payment').query({ transaction_id: '3290545'})
+            .send().expect(409)
+    })
+}) 
 
 
 
