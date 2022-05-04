@@ -41,7 +41,6 @@ router.get("/handle-flutterwave-payment", async (req, res) => {
     // check if customer exist in our database
     const user = await User.findOne({ email: customer.email });
     // check if user have a premium, else create premium
-    console.log(user)
     const premium = await validateUserPremium(user._id);
 
     // create premium transaction
