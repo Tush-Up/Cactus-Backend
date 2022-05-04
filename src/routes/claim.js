@@ -41,7 +41,7 @@ router.post('/users/claim', Auth, async (req, res) => {
             }
         })
         await claim.save()
-        res.send(claim)
+        res.status(201).send(claim)
     } catch (error) {
         res.status(400).send(error.message)
     }

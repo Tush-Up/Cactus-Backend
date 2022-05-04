@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "dev": " nodemon src/index.js",
+    "dev":  "env-cmd -f ./config/dev.env nodemon src/index.js",
     "test": "env-cmd -f ./config/test.env jest --detectOpenHandles --watch"
   },
   "repository": {
@@ -37,6 +37,8 @@
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
-    "nodemon": "^2.0.15"
+    "jest": "^28.0.3",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.3"
   }
 }

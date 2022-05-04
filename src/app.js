@@ -7,9 +7,9 @@ const authRoute = require("./routes/auth");
 //const User = require("./models/User")
 const claimRouter = require('./routes/claim')
 const OTPVerification = require("./models/OTPVerification");
-require("dotenv").config({
-  path: path.resolve(__dirname, "../config/dev.env"),
-});
+// require("dotenv").config({
+//   path: path.resolve(__dirname, "../config/dev.env"),
+// });
 require("./db/mongoose");
 
 const app = express();
