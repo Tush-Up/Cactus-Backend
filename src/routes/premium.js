@@ -14,7 +14,6 @@ const {
 const router = express.Router()
 
 router.get("/handle-flutterwave-payment", async (req, res) => {
-  const user = req.user
   const { transaction_id } = req.query;
   // URL with transaction ID of which will be used to confirm transaction status
   const url = `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`;
@@ -31,7 +30,6 @@ router.get("/handle-flutterwave-payment", async (req, res) => {
         Authorization: `${process.env.FLUTTERWAVE_V3_SECRET_KEY}`,
       }
     });
-
     const { status, currency, id, amount, customer } = response.data.data;
 
     const transaction = await Transaction.findOne({ transactionId: id });
@@ -43,6 +41,7 @@ router.get("/handle-flutterwave-payment", async (req, res) => {
     // check if customer exist in our database
     const user = await User.findOne({ email: customer.email });
     // check if user have a premium, else create premium
+    console.log(user)
     const premium = await validateUserPremium(user._id);
 
     // create premium transaction
