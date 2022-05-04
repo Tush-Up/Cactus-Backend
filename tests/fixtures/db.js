@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const Claim = require('../../src/models/claim/claim')
 const Transaction = require('../../src/models/premium/transaction')
 const Premium = require('../../src/models/premium/premiums')
+const premiumTransaction = require('../../src/models/premium/premium_transaction')
 const Wallet = require('../../src/models/wallet/wallet')
 const User = require('../../src/models/user')
 
@@ -50,6 +51,8 @@ const setUpDatabase = async () => {
     await User.deleteMany()
     await Claim.deleteMany()
     await Transaction.deleteMany()
+    await Premium.deleteMany()
+    await premiumTransaction.deleteMany()
     await new User(userOne).save()
     await new User(userTwo).save()
 }
