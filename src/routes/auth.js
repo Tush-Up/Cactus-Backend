@@ -84,9 +84,9 @@ router.post("/register", async (req, res) => {
       if (error) {
         console.log("it has an error");
         console.log(error);
-      } else {
-        console.log("email sent");
-      }
+       } //else {
+      //   console.log("email sent");
+      // }
     });
   } catch (error) {
     res.status(400).send({ error: error.message });
