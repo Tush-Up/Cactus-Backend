@@ -11,14 +11,15 @@ const { RegisterValidation, loginValidation, editProfileValidation } = require("
 
 //setup nodemailer
 let transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: 'gmail',
   auth: {
-    user: "CactusinsuranceTeam@gmail.com",
-    pass: "Team3tushup"
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
+    type: 'OAuth2',
+    user: process.env.MAIL_USERNAME,
+    pass: process.env.MAIL_PASSWORD,
+    clientId: process.env.OAUTH_CLIENTID,
+    clientSecret: process.env.OAUTH_CLIENT_SECRET,
+    refreshToken: process.env.OAUTH_REFRESH_TOKEN
+  }
 });
 
 //sign up
@@ -69,7 +70,7 @@ router.post("/register", async (req, res) => {
 
     // Email contents
     const details = {
-      from: "Cactus-insurance@outlook.com",
+      from: '"Cactus Insurance 👻" <cactusinsuranceteam@gmail.com>',
       to: req.body.email,
       subject: "Cactus -Verify your email",
       html: `<h2> ${user.name}! Thanks for Registering with Cactus.<h2>
@@ -84,9 +85,9 @@ router.post("/register", async (req, res) => {
       if (error) {
         console.log("it has an error");
         console.log(error);
-       } //else {
-      //   console.log("email sent");
-      // }
+       } else {
+        console.log("email sent");
+       }
     });
   } catch (error) {
     res.status(400).send({ error: error.message });
