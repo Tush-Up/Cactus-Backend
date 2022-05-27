@@ -161,7 +161,7 @@ router.post('/reset-password', async (req, res) => {
 
     //Send email
     const Emaildetails = {
-      from: "Cactus-insurance@outlook.com",
+      from: '"Cactus Insurance 👻" <cactusinsuranceteam@gmail.com>',
       to: req.body.email,
       subject: "PASSWORD RESET REQUEST",
       html: `<h2> ${user.name}!.<h2>
@@ -255,7 +255,7 @@ router.delete('/delete', Auth, async (req, res) => {
     //send cancellation email
     // Email contents
     const details = {
-      from: "Cactus-insurance@outlook.com",
+      from: '"Cactus Insurance 👻" <cactusinsuranceteam@gmail.com>',
       to: user.email,
       subject: "Good bye!",
       text: `Goodbye ${user.name}. It's sad to see you go. Is there anything we could have done to keep you?`
